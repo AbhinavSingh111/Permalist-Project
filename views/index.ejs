@@ -1,0 +1,67 @@
+<%- include('partials/header.ejs'); -%>
+
+  <div class="box" id="heading">
+    <h1>
+      <%= listTitle %>
+    </h1>
+  </div>
+  <div class="box">
+    <% for(let item of listItems){%>
+      <div class="item">
+        <form action="/delete" method="post">
+          <input type="checkbox" onchange="this.form.submit()" name="deleteItemId" value="<%= item.id %>">
+        </form>
+
+        <p id="title<%=item.id%>">
+          <%= item.title %>
+        </p>
+
+        <form class="edit" action="/edit" method="post">
+          <input type="hidden" name="updatedItemId" value="<%= item.id %>">
+          <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
+            autofocus="true" hidden="true" />
+          <button id="done<%=item.id%>" class="edit" type="submit" hidden><img class="icon"
+              src="/assets/icons/check-solid.svg" alt="tick image"></button>
+        </form>
+        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon"
+            src="/assets/icons/pencil-solid.svg" alt="pencil image"></button>
+      </div>
+      <% } %>
+
+      <div class="warning-container" id="warningContainer" style="display: none; color: red;">
+        Please enter a value in the input field.
+      </div>
+        <form class="item" action="/add" method="post" onsubmit="return validation()">
+          <input type="text" id="newItem" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" />
+          <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button>
+        </form>
+  </div>
+
+  <script>
+    function handler(id) {
+      document.getElementById("title" + id).setAttribute("hidden", true)
+      document.getElementById("edit" + id).setAttribute("hidden", true)
+      document.getElementById("done" + id).removeAttribute("hidden")
+      document.getElementById("input" + id).removeAttribute("hidden")
+    }
+    function validation() {
+      var newItemInput = document.getElementById('newItem');
+      console.log(newItemInput);
+      var warningContainer = document.getElementById('warningContainer');
+
+      // Check if the input field is empty
+      if (!newItemInput.value.trim()) {
+        // Display the warning container
+        warningContainer.style.display = 'block';
+        setTimeout(()=>{warningContainer.style.display = 'none'},1000);
+        // Prevent form submission
+        return false;
+      } else {
+        // Hide the warning container and allow form submission
+        warningContainer.style.display = 'none';
+        return true;
+      }
+    }
+
+  </script>
+  <%- include('partials/footer.ejs'); -%>
